@@ -45,8 +45,9 @@ const Footer = () => (
         </div>
       </div>
     </div>
-    <div className="border-t border-cream-dark/20 text-center py-6 text-xs text-cream-dark/60 font-body">
-      © {new Date().getFullYear()} Reinaha's Spa. All rights reserved.
+    <div className="border-t border-cream-dark/20 text-center py-6 text-xs text-cream-dark/60 font-body space-y-2">
+      <p>© {new Date().getFullYear()} Reinaha's Spa. All rights reserved. ™</p>
+      <p>Built by Algokings</p>
     </div>
   </footer>
 );
