@@ -33,6 +33,7 @@ const App = () => (
           </Routes>
         </main>
         <Footer />
+        <WhatsAppFloat />
       </BrowserRouter>
     </TooltipProvider>
   </QueryClientProvider>
