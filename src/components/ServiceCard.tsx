@@ -19,7 +19,7 @@ const ServiceCard = ({ title, description, price, duration, image, index }: Serv
     transition={{ duration: 0.6, delay: index * 0.1 }}
     className="glass-card hover-lift group overflow-hidden"
   >
-    <div className="relative h-56 overflow-hidden">
+    <div className="relative h-72 overflow-hidden">
       <img
         src={image}
         alt={title}

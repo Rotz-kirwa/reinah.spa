@@ -11,7 +11,7 @@ import { services } from "@/data/services";
 
 const highlights = [
   { title: "Massages", desc: "Deep Tissue, Swedish, Hot Stone", image: massageRoom },
-  { title: "Facials & Skincare", desc: "Deep Cleansing, Anti-Aging", image: lounge },
+  { title: "Facials & Skincare", desc: "Deep Cleansing, Anti-Aging", image: "https://i.pinimg.com/736x/14/0a/b9/140ab96977c75b5b959170f800dbfeb1.jpg" },
   { title: "Nail Bar", desc: "Manicures, Pedicures, Gel & Acrylics", image: nailBar },
 ];
 

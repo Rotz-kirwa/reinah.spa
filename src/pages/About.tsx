@@ -1,23 +1,18 @@
 import { motion } from "framer-motion";
 import SectionHeading from "@/components/SectionHeading";
-import heroImage from "@/assets/hero-spa.jpg";
-import massageRoom from "@/assets/massage-room.jpg";
-import facialRoom from "@/assets/facial-room.jpg";
-import lounge from "@/assets/lounge.jpg";
-import nailBar from "@/assets/nail-bar.jpg";
-import steamRoom from "@/assets/steam-room.jpg";
-import bodyTreatment from "@/assets/body-treatment.jpg";
 import exterior from "@/assets/exterior.jpg";
 
 const galleryImages = [
-  { src: heroImage, alt: "Reception & Water Wall" },
-  { src: massageRoom, alt: "Massage Treatment Room" },
-  { src: facialRoom, alt: "Skincare Suite" },
-  { src: lounge, alt: "Relaxation Lounge" },
-  { src: nailBar, alt: "Nail Bar" },
-  { src: steamRoom, alt: "Steam Room & Sauna" },
-  { src: bodyTreatment, alt: "Body Treatment Room" },
-  { src: exterior, alt: "Spa Exterior" },
+  { src: "https://i.pinimg.com/736x/33/df/6f/33df6f13576e7599f36e252e2a5e7027.jpg", alt: "Spa Reception" },
+  { src: "https://i.pinimg.com/736x/85/19/37/85193722712f3f91be6a01934741f0c0.jpg", alt: "Massage Room" },
+  { src: "https://i.pinimg.com/736x/48/ad/1a/48ad1a1aa861fa767f053d3abe925980.jpg", alt: "Treatment Space" },
+  { src: "https://i.pinimg.com/736x/e0/e6/2b/e0e62b3d4ddf06945d0b6567b29ce979.jpg", alt: "Spa Lounge" },
+  { src: "https://i.pinimg.com/1200x/f8/0f/07/f80f076847787632a560c7a70bf31b59.jpg", alt: "Luxury Facial Room" },
+  { src: "https://i.pinimg.com/736x/aa/ec/8c/aaec8c105e27896aa464ed906caaac44.jpg", alt: "Wellness Suite" },
+  { src: "https://i.pinimg.com/736x/d5/20/cf/d520cf27cca169521ce95010364efac6.jpg", alt: "Relaxation Corner" },
+  { src: "https://i.pinimg.com/736x/a1/eb/9b/a1eb9b0b3adebd3856122a237f23061b.jpg", alt: "Spa Interior" },
+  { src: "https://i.pinimg.com/736x/57/4c/b2/574cb2cedb316c15b6332ad6ccebb1a0.jpg", alt: "Therapy Room" },
+  { src: "https://i.pinimg.com/736x/dd/73/73/dd73730703e50933697084560f868835.jpg", alt: "Signature Spa Experience" },
 ];
 
 const About = () => (

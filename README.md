@@ -1,73 +1,72 @@
-# Welcome to your Lovable project
+# Reinaha's Spa - Digital Oasis
 
-## Project info
+A luxury spa and wellness website showcasing premium treatments and booking experiences.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+## Getting Started
 
-## How can I edit this code?
+### Prerequisites
 
-There are several ways of editing your application.
+- Node.js (v16+) or Bun
+- Git
 
-**Use Lovable**
+### Installation & Development
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+1. Clone the repository and navigate to the project directory
 
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
+2. Install dependencies:
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+bun install
+# or
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+3. Start the development server:
+```sh
+bun run dev
+# or
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The application will be available at `http://localhost:8080`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Available Scripts
 
-**Use GitHub Codespaces**
+- `bun run dev` - Start development server
+- `bun run build` - Build for production
+- `bun run preview` - Preview production build
+- `bun run test` - Run tests
+- `bun run lint` - Run linter
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## Project Structure
 
-## What technologies are used for this project?
+```
+src/
+├── components/          # Reusable UI components
+├── pages/              # Page components (Home, Services, Booking, etc.)
+├── data/               # Static data (services list)
+├── hooks/              # Custom React hooks
+├── lib/                # Utility functions
+├── assets/             # Images and media
+└── App.tsx             # Main app component with routing
+```
 
-This project is built with:
+## Technologies
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Vite** - Next generation build tool
+- **React 18** - JavaScript library for building UIs
+- **TypeScript** - Type-safe development
+- **Tailwind CSS** - Utility-first CSS framework
+- **Shadcn UI** - High-quality React components
+- **Framer Motion** - Animation library
+- **React Router** - Client-side routing
+- **React Hook Form** - Performant form handling
+- **TanStack React Query** - Data fetching and caching
 
-## How can I deploy this project?
+## Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
+Build the production-ready bundle:
+```sh
+bun run build
+```
 
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
+This creates a `dist` folder with optimized assets ready for deployment on any static hosting service (Netlify, Vercel, GitHub Pages, etc.)

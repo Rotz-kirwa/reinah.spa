@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { motion } from "framer-motion";
-import { CalendarIcon, Clock, User, CheckCircle2 } from "lucide-react";
+import { CalendarIcon, CheckCircle2, Clock, User } from "lucide-react";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -23,25 +23,32 @@ const timeSlots = [
 ];
 
 const Booking = () => {
-  const [step, setStep] = useState(1);
-  const [selectedService, setSelectedService] = useState("");
+  const [selectedService, setSelectedService] = useState(services[0]?.id ?? "");
   const [date, setDate] = useState<Date>();
   const [time, setTime] = useState("");
   const [therapist, setTherapist] = useState("any");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
+  const [notes, setNotes] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = () => {
-    setSubmitted(true);
-  };
+  const selectedServiceData = useMemo(
+    () => services.find((service) => service.id === selectedService),
+    [selectedService]
+  );
 
-  const canProceed = (s: number) => {
-    if (s === 1) return !!selectedService;
-    if (s === 2) return !!date && !!time;
-    if (s === 3) return name.trim().length > 0 && phone.trim().length > 0;
-    return false;
+  const canSubmit =
+    !!selectedService &&
+    !!date &&
+    !!time &&
+    name.trim().length > 0 &&
+    phone.trim().length > 0;
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!canSubmit) return;
+    setSubmitted(true);
   };
 
   if (submitted) {
@@ -53,16 +60,17 @@ const Booking = () => {
           className="glass-card p-12 text-center max-w-md mx-6"
         >
           <CheckCircle2 className="w-16 h-16 text-secondary mx-auto mb-6" />
-          <h2 className="font-display text-3xl text-foreground mb-3">Booking Confirmed</h2>
+          <h2 className="font-display text-3xl text-foreground mb-3">Booking Request Sent</h2>
           <div className="divider-gold" />
           <p className="text-sm text-muted-foreground font-body mt-4 leading-relaxed">
-            Thank you, {name}! Your appointment has been reserved. We'll send a confirmation via WhatsApp to {phone}.
+            Thank you, {name}! Your spa booking request has been received. We'll confirm your appointment on WhatsApp at {phone}.
           </p>
           <div className="mt-6 p-4 bg-muted rounded-sm text-left text-sm font-body space-y-2">
-            <p><strong>Service:</strong> {services.find(s => s.id === selectedService)?.title}</p>
+            <p><strong>Service:</strong> {selectedServiceData?.title}</p>
+            <p><strong>Price:</strong> {selectedServiceData?.price}</p>
             <p><strong>Date:</strong> {date ? format(date, "PPP") : ""}</p>
             <p><strong>Time:</strong> {time}</p>
-            <p><strong>Therapist:</strong> {therapists.find(t => t.id === therapist)?.name}</p>
+            <p><strong>Therapist:</strong> {therapists.find((item) => item.id === therapist)?.name}</p>
           </div>
         </motion.div>
       </div>
@@ -71,201 +79,231 @@ const Booking = () => {
 
   return (
     <div>
-      {/* Hero */}
       <section className="relative h-[40vh] min-h-[350px] flex items-center justify-center">
         <img src={heroImage} alt="Spa treatment" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-charcoal/60" />
         <div className="relative z-10 text-center px-6">
           <h1 className="font-display text-4xl md:text-6xl text-cream font-light">Book Your Escape</h1>
           <div className="divider-gold mt-4" />
+          <p className="mt-4 text-sm font-body text-cream-dark/85">
+            Choose your service, view the price instantly, and send your booking request.
+          </p>
         </div>
       </section>
 
       <section className="section-padding bg-background">
-        <div className="max-w-2xl mx-auto">
-          {/* Steps indicator */}
-          <div className="flex items-center justify-center gap-4 mb-12">
-            {[1, 2, 3].map((s) => (
-              <div key={s} className="flex items-center gap-2">
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-body ${
-                  step >= s ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
-                }`}>
-                  {s}
-                </div>
-                <span className="text-xs font-body text-muted-foreground hidden sm:inline">
-                  {s === 1 ? "Service" : s === 2 ? "Date & Time" : "Details"}
+        <div className="max-w-6xl mx-auto grid gap-10 lg:grid-cols-[1.2fr_0.8fr]">
+          <motion.form
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            onSubmit={handleSubmit}
+            className="glass-card p-8 md:p-10 space-y-8"
+          >
+            <div>
+              <span className="text-xs tracking-[0.3em] uppercase font-body text-primary">Specialized Booking</span>
+              <h2 className="font-display text-3xl text-foreground mt-3">Reserve a Signature Treatment</h2>
+              <p className="text-sm text-muted-foreground font-body mt-3">
+                Select any service from the dropdown below. The price and duration update automatically.
+              </p>
+            </div>
+
+            <div className="grid gap-6 md:grid-cols-2">
+              <label className="block space-y-2 md:col-span-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Service & Price
                 </span>
-                {s < 3 && <div className={`w-12 h-px ${step > s ? "bg-primary" : "bg-border"}`} />}
-              </div>
-            ))}
-          </div>
-
-          {/* Step 1: Service */}
-          {step === 1 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-3">
-              <h3 className="font-display text-2xl text-center mb-6">Select Your Treatment</h3>
-              {services.map((s) => (
-                <button
-                  key={s.id}
-                  onClick={() => setSelectedService(s.id)}
-                  className={`w-full text-left p-4 border rounded-sm transition-all font-body text-sm flex justify-between items-center ${
-                    selectedService === s.id
-                      ? "border-primary bg-primary/5"
-                      : "border-border hover:border-primary/50"
-                  }`}
+                <select
+                  value={selectedService}
+                  onChange={(event) => setSelectedService(event.target.value)}
+                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
                 >
-                  <div>
-                    <span className="font-medium text-foreground">{s.title}</span>
-                    <span className="text-muted-foreground ml-2">· {s.duration}</span>
-                  </div>
-                  <span className="text-primary font-medium">{s.price}</span>
-                </button>
-              ))}
-            </motion.div>
-          )}
+                  {services.map((service) => (
+                    <option key={service.id} value={service.id}>
+                      {service.title} — {service.price}
+                    </option>
+                  ))}
+                </select>
+              </label>
 
-          {/* Step 2: Date & Time */}
-          {step === 2 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-8">
-              <h3 className="font-display text-2xl text-center mb-6">Choose Date & Time</h3>
-              <div className="flex justify-center">
+              <label className="block space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Full Name
+                </span>
+                <input
+                  type="text"
+                  placeholder="Your full name"
+                  value={name}
+                  onChange={(event) => setName(event.target.value)}
+                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                />
+              </label>
+
+              <label className="block space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Phone / WhatsApp
+                </span>
+                <input
+                  type="tel"
+                  placeholder="+254..."
+                  value={phone}
+                  onChange={(event) => setPhone(event.target.value)}
+                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                />
+              </label>
+
+              <label className="block space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Email
+                </span>
+                <input
+                  type="email"
+                  placeholder="Optional email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                />
+              </label>
+
+              <label className="block space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Preferred Therapist
+                </span>
+                <div className="relative">
+                  <User className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <select
+                    value={therapist}
+                    onChange={(event) => setTherapist(event.target.value)}
+                    className="w-full border border-border bg-background py-3 pl-11 pr-4 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  >
+                    {therapists.map((item) => (
+                      <option key={item.id} value={item.id}>
+                        {item.name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
+
+              <div className="space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Appointment Date
+                </span>
                 <Popover>
                   <PopoverTrigger asChild>
-                    <button className={cn(
-                      "flex items-center gap-2 border border-border px-6 py-3 rounded-sm font-body text-sm",
-                      !date && "text-muted-foreground"
-                    )}>
+                    <button
+                      type="button"
+                      className={cn(
+                        "flex w-full items-center gap-2 border border-border bg-background px-4 py-3 rounded-sm font-body text-sm transition-colors",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
                       <CalendarIcon className="w-4 h-4" />
                       {date ? format(date, "PPP") : "Pick a date"}
                     </button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="center">
+                  <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
                       selected={date}
                       onSelect={setDate}
-                      disabled={(d) => d < new Date()}
+                      disabled={(day) => day < new Date(new Date().setHours(0, 0, 0, 0))}
                       className="p-3 pointer-events-auto"
                     />
                   </PopoverContent>
                 </Popover>
               </div>
 
-              <div>
-                <p className="text-sm font-body text-muted-foreground text-center mb-4">Available Times</p>
-                <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
-                  {timeSlots.map((t) => (
-                    <button
-                      key={t}
-                      onClick={() => setTime(t)}
-                      className={`py-2.5 text-xs font-body border rounded-sm transition-all ${
-                        time === t
-                          ? "border-primary bg-primary/5 text-foreground"
-                          : "border-border text-muted-foreground hover:border-primary/50"
-                      }`}
-                    >
-                      {t}
-                    </button>
-                  ))}
+              <label className="block space-y-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Preferred Time
+                </span>
+                <div className="relative">
+                  <Clock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <select
+                    value={time}
+                    onChange={(event) => setTime(event.target.value)}
+                    className="w-full border border-border bg-background py-3 pl-11 pr-4 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+                  >
+                    <option value="">Select a time slot</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot}>
+                        {slot}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </div>
+              </label>
 
-              <div>
-                <p className="text-sm font-body text-muted-foreground text-center mb-4">Preferred Therapist</p>
-                <div className="space-y-2">
-                  {therapists.map((t) => (
-                    <button
-                      key={t.id}
-                      onClick={() => setTherapist(t.id)}
-                      className={`w-full text-left p-3 border rounded-sm transition-all font-body text-sm flex items-center gap-3 ${
-                        therapist === t.id
-                          ? "border-primary bg-primary/5"
-                          : "border-border hover:border-primary/50"
-                      }`}
-                    >
-                      <User className="w-4 h-4 text-muted-foreground" />
-                      {t.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </motion.div>
-          )}
-
-          {/* Step 3: Details */}
-          {step === 3 && (
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6">
-              <h3 className="font-display text-2xl text-center mb-6">Your Details</h3>
-              <div className="space-y-4">
-                <input
-                  type="text"
-                  placeholder="Full Name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
+              <label className="block space-y-2 md:col-span-2">
+                <span className="text-xs tracking-widest uppercase font-body text-muted-foreground">
+                  Notes
+                </span>
+                <textarea
+                  rows={5}
+                  placeholder="Add any preferences, occasion details, or treatment notes"
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors resize-none"
                 />
-                <input
-                  type="tel"
-                  placeholder="Phone / WhatsApp (+254...)"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                />
-                <input
-                  type="email"
-                  placeholder="Email (optional)"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="w-full border border-border bg-background px-4 py-3 rounded-sm font-body text-sm focus:outline-none focus:border-primary transition-colors"
-                />
-              </div>
-
-              {/* Summary */}
-              <div className="p-6 bg-muted rounded-sm text-sm font-body space-y-2">
-                <h4 className="font-display text-lg mb-3">Booking Summary</h4>
-                <p><strong>Service:</strong> {services.find(s => s.id === selectedService)?.title}</p>
-                <p><strong>Price:</strong> {services.find(s => s.id === selectedService)?.price}</p>
-                <p><strong>Date:</strong> {date ? format(date, "PPP") : "—"}</p>
-                <p><strong>Time:</strong> {time}</p>
-                <p><strong>Therapist:</strong> {therapists.find(t => t.id === therapist)?.name}</p>
-              </div>
-
-              <p className="text-xs text-muted-foreground font-body text-center">
-                Payment via M-Pesa or PayPal will be arranged upon confirmation.
-              </p>
-            </motion.div>
-          )}
-
-          {/* Navigation */}
-          <div className="flex justify-between mt-10">
-            {step > 1 && (
-              <button
-                onClick={() => setStep(step - 1)}
-                className="text-sm tracking-widest uppercase font-body text-muted-foreground hover:text-foreground transition-colors"
-              >
-                ← Back
-              </button>
-            )}
-            <div className="ml-auto">
-              {step < 3 ? (
-                <button
-                  disabled={!canProceed(step)}
-                  onClick={() => setStep(step + 1)}
-                  className="bg-primary text-primary-foreground px-8 py-3 text-sm tracking-widest uppercase font-body disabled:opacity-40 hover:bg-gold-light transition-colors"
-                >
-                  Continue →
-                </button>
-              ) : (
-                <button
-                  disabled={!canProceed(step)}
-                  onClick={handleSubmit}
-                  className="bg-primary text-primary-foreground px-8 py-3 text-sm tracking-widest uppercase font-body disabled:opacity-40 hover:bg-gold-light transition-colors"
-                >
-                  Confirm Booking
-                </button>
-              )}
+              </label>
             </div>
-          </div>
+
+            <button
+              type="submit"
+              disabled={!canSubmit}
+              className="w-full bg-primary text-primary-foreground px-8 py-4 text-sm tracking-widest uppercase font-body disabled:opacity-40 hover:bg-gold-light transition-colors"
+            >
+              Send Booking Request
+            </button>
+          </motion.form>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="space-y-6"
+          >
+            <div className="glass-card p-8">
+              <span className="text-xs tracking-[0.3em] uppercase font-body text-primary">Booking Summary</span>
+              <h3 className="font-display text-2xl text-foreground mt-3">
+                {selectedServiceData?.title ?? "Select a service"}
+              </h3>
+              <div className="divider-gold !mx-0" />
+              <div className="space-y-4 text-sm font-body">
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-muted-foreground">Price</span>
+                  <span className="text-foreground font-medium">{selectedServiceData?.price ?? "—"}</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-muted-foreground">Duration</span>
+                  <span className="text-foreground font-medium">{selectedServiceData?.duration ?? "—"}</span>
+                </div>
+                <div className="flex items-center justify-between gap-4">
+                  <span className="text-muted-foreground">Category</span>
+                  <span className="text-foreground font-medium">{selectedServiceData?.category ?? "—"}</span>
+                </div>
+                <div className="border-t border-border pt-4">
+                  <p className="text-muted-foreground leading-relaxed">
+                    {selectedServiceData?.description ?? "Select a service to view treatment details."}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="glass-card p-8">
+              <h3 className="font-display text-2xl text-foreground">Appointment Snapshot</h3>
+              <div className="divider-gold !mx-0" />
+              <div className="space-y-3 text-sm font-body text-muted-foreground">
+                <p><strong className="text-foreground">Date:</strong> {date ? format(date, "PPP") : "Not selected"}</p>
+                <p><strong className="text-foreground">Time:</strong> {time || "Not selected"}</p>
+                <p><strong className="text-foreground">Therapist:</strong> {therapists.find((item) => item.id === therapist)?.name}</p>
+                <p><strong className="text-foreground">Payment:</strong> M-Pesa or PayPal arranged after confirmation</p>
+                {notes.trim() && (
+                  <p><strong className="text-foreground">Notes:</strong> {notes}</p>
+                )}
+              </div>
+            </div>
+          </motion.div>
         </div>
       </section>
     </div>
